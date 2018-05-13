@@ -80,15 +80,58 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+func initMockData() {
+
+	// Mock Data
+	book1 := Book{
+		ID:    "1",
+		Isbn:  "12345",
+		Title: "Book One",
+	}
+	author1 := Author{
+		Firstname: "John",
+		Lastname:  "Doe",
+	}
+	address1 := Address{
+		AddressLine1: "123 Main Street",
+		AddressLine2: "",
+		City:         "San Diego",
+		State:        "CA",
+		Zip:          92127,
+	}
+
+	author1.Address = &address1
+	book1.Author = &author1
+	books = append(books, book1)
+
+	book2 := Book{
+		ID:    "2",
+		Isbn:  "78910",
+		Title: "Book Two",
+	}
+	author2 := Author{
+		Firstname: "Sam",
+		Lastname:  "Smith",
+	}
+	address2 := Address{
+		AddressLine1: "456 Front Street",
+		AddressLine2: "",
+		City:         "San Diego",
+		State:        "CA",
+		Zip:          92127,
+	}
+
+	author2.Address = &address2
+	book2.Author = &author2
+	books = append(books, book2)
+}
+
 func main() {
 	// Init Router
 	r := mux.NewRouter()
 
-	// Mock Data
-	books = append(books, Book{ID: "1", Isbn: "12345", Title: "Book One", Author: &Author{
-		Firstname: "John", Lastname: "Doe"}})
-	books = append(books, Book{ID: "2", Isbn: "678910", Title: "Book Two", Author: &Author{
-		Firstname: "Steve", Lastname: "Smith"}})
+	// Initialize some Mock Data
+	initMockData()
 
 	// Route Handlers / Endponts
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
