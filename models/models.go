@@ -1,4 +1,4 @@
-package main
+package models
 
 // Book Struct (Model)
 type Book struct {

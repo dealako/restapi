@@ -1,3 +1,6 @@
+# The binary for this app
+restapi
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

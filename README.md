@@ -2,7 +2,7 @@
 
 This is a sample Go project that illustrates a REST service.  The code example is a walkthru from [a Traversy Media video on YouTube](https://www.youtube.com/watch?v=SonwZ6MF5BE). The application includes a simple REST application with the usual crate, read, update, and delete (CRUD) functions.
 
-The models for the sample REST application are in the `models` folder which consist of a Book and Author objects.
+The models for the sample REST application are in the `models` folder which consist of a Book, Author and Address objects.
 
 ## Dependencies
 

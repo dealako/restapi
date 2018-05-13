@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/dealako/restapi/models"
 	"github.com/gorilla/mux"
 )
 
 // Init books variable as a slice Books struct
-var books []Book
+var books []models.Book
 
 // Get All Books
 func getBooks(w http.ResponseWriter, r *http.Request) {
@@ -30,13 +31,13 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	json.NewEncoder(w).Encode(&Book{})
+	json.NewEncoder(w).Encode(&models.Book{})
 }
 
 // Create Books
 func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var book Book
+	var book models.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(10000000)) // Mock ID - not safe
 	books = append(books, book)
@@ -53,7 +54,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 		if item.ID == params["id"] {
 			books = append(books[:index], books[index+1:]...)
 
-			var book Book
+			var book models.Book
 			_ = json.NewDecoder(r.Body).Decode(&book)
 			book.ID = params["id"]
 			books = append(books, book)
@@ -83,16 +84,16 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 func initMockData() {
 
 	// Mock Data
-	book1 := Book{
+	book1 := models.Book{
 		ID:    "1",
 		Isbn:  "12345",
 		Title: "Book One",
 	}
-	author1 := Author{
+	author1 := models.Author{
 		Firstname: "John",
 		Lastname:  "Doe",
 	}
-	address1 := Address{
+	address1 := models.Address{
 		AddressLine1: "123 Main Street",
 		AddressLine2: "",
 		City:         "San Diego",
@@ -104,16 +105,16 @@ func initMockData() {
 	book1.Author = &author1
 	books = append(books, book1)
 
-	book2 := Book{
+	book2 := models.Book{
 		ID:    "2",
 		Isbn:  "78910",
 		Title: "Book Two",
 	}
-	author2 := Author{
+	author2 := models.Author{
 		Firstname: "Sam",
 		Lastname:  "Smith",
 	}
-	address2 := Address{
+	address2 := models.Address{
 		AddressLine1: "456 Front Street",
 		AddressLine2: "",
 		City:         "San Diego",
