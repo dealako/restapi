@@ -2,3 +2,5 @@ package: github.com/dealako/restapi
 import:
   - package: github.com/gorilla/mux
   - package: github.com/sirupsen/logrus
+  - package: github.com/spf13/cobra/cobra
+  - package: github.com/spf13/viper

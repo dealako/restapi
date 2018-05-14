@@ -6,18 +6,34 @@ The models for the sample REST application are in the `models` folder which cons
 
 ## Dependencies
 
-To build and run the application, the `mux` router package must be installed.
+To build and run the application, the `mux` router package and the `logrus` logging package must be installed.
+
+The `Makefile` in the root folder includes a target to install these:
+
+```bash
+# Install dependencies
+make install-deps
+```
+
+Otherwise, you can install them manually:
 
 ```bash
 # Install mux router
 go get -u github.com/gorilla/mux
+go get -u github.com/sirupsen/logrus
 ```
 
 ## Build
 
-To build the application, run the following command:
+To build the application, run one of the following commands:
 
 ```bash
+# Using make - will include additional metadata in the binary such as BUILD_TIME, VERSION, git commit/branch, and app name
+make
+```
+
+```bash
+# Using go build which doesn't include additional metadata
 go build
 ```
 
@@ -31,4 +47,7 @@ To run the application, run the following command:
 ./restapi
 ```
 
-Once the application is running, connect on port 8000 with a web browser, your favorite REST client such as Postman, or other HTTP client.
+Once the application is running, connect on port 8000 with a web browser,
+your favorite REST client such as [Postman](https://www.getpostman.com/), or
+other HTTP clients such as [cURL](https://curl.haxx.se/) or even
+[resty](https://github.com/micha/resty).
