@@ -1,6 +1,12 @@
 # The binary for this app
 restapi
 
+# Ignore history
+.history/
+
+# Ignore the vendor folder
+vendor/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
