@@ -56,7 +56,10 @@ var books []models.Book
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(books)
+	err := json.NewEncoder(w).Encode(books)
+	if err != nil {
+		log.Warn("Error while encoding response: %v", err)
+	}
 }
 
 // Get Single Book
@@ -69,13 +72,19 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	for _, item := range books {
 		if item.ID == params["id"] {
 			// Write the book back to the client and return
-			json.NewEncoder(w).Encode(item)
+			err := json.NewEncoder(w).Encode(item)
+			if err != nil {
+				log.Warn("Error while encoding response: %v", err)
+			}
 			return
 		}
 	}
 
 	// Fell through - write an empty book back to the client and return
-	json.NewEncoder(w).Encode(&models.Book{})
+	err := json.NewEncoder(w).Encode(&models.Book{})
+	if err != nil {
+		log.Warn("Error while encoding response: %v", err)
+	}
 }
 
 // Create Books
@@ -84,12 +93,18 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var book models.Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
+	err := json.NewDecoder(r.Body).Decode(&book)
+	if err != nil {
+		log.Warn("Error while decoding response: %v", err)
+	}
 	book.ID = strconv.Itoa(rand.Intn(10000000)) // Mock ID - not safe
 	books = append(books, book)
 
 	// Write the new book back to the client and return
-	json.NewEncoder(w).Encode(book)
+	err = json.NewEncoder(w).Encode(book)
+	if err != nil {
+		log.Warn("Error while encoding response: %v", err)
+	}
 }
 
 // Update Book
@@ -104,18 +119,27 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 			books = append(books[:index], books[index+1:]...)
 
 			var book models.Book
-			_ = json.NewDecoder(r.Body).Decode(&book)
+			err := json.NewDecoder(r.Body).Decode(&book)
+			if err != nil {
+				log.Warn("Error while decoding response: %v", err)
+			}
 			book.ID = params["id"]
 			books = append(books, book)
 
 			// Write the updated book back to the client and return
-			json.NewEncoder(w).Encode(book)
+			err = json.NewEncoder(w).Encode(book)
+			if err != nil {
+				log.Warn("Error while encoding response: %v", err)
+			}
 			return
 		}
 	}
 
 	// Return the current slice of books
-	json.NewEncoder(w).Encode(books)
+	err := json.NewEncoder(w).Encode(books)
+	if err != nil {
+		log.Warn("Error while encoding response: %v", err)
+	}
 }
 
 // Delete Book
@@ -134,7 +158,10 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return the current slice of books
-	json.NewEncoder(w).Encode(books)
+	err := json.NewEncoder(w).Encode(books)
+	if err != nil {
+		log.Warn("Error while encoding response: %v", err)
+	}
 }
 
 // initMockData creates some sample data and fills the books slice
