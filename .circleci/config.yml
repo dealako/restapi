@@ -23,6 +23,7 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: sudo apt-get install build-essential checkinstall -y
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       - run: make clean
       - run: make install-deps
       - run: make
