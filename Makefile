@@ -39,7 +39,7 @@ $(GO_META_LINTER):
 .PHONY: analyze
 analyze: install-deps
 	@echo "Analyzing code..."
-	-gometalinter --disable=gotype --enable=gofmt --enable=goimports --enable=unused --deadline=2m ./...
+	-gometalinter --disable=gotype --enable=gofmt --enable=goimports --enable=unused --deadline=2m --vendor ./...
 
 imports:
 	goimports -w *.go
