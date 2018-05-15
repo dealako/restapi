@@ -54,36 +54,47 @@ var books []models.Book
 
 // Get All Books
 func getBooks(w http.ResponseWriter, r *http.Request) {
+	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
 
 // Get Single Book
 func getBook(w http.ResponseWriter, r *http.Request) {
+	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params
+
 	// Look through the books and find the id
 	for _, item := range books {
 		if item.ID == params["id"] {
+			// Write the book back to the client and return
 			json.NewEncoder(w).Encode(item)
 			return
 		}
 	}
+
+	// Fell through - write an empty book back to the client and return
 	json.NewEncoder(w).Encode(&models.Book{})
 }
 
 // Create Books
 func createBook(w http.ResponseWriter, r *http.Request) {
+	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
+
 	var book models.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(10000000)) // Mock ID - not safe
 	books = append(books, book)
+
+	// Write the new book back to the client and return
 	json.NewEncoder(w).Encode(book)
 }
 
 // Update Book
 func updateBook(w http.ResponseWriter, r *http.Request) {
+	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params
 
@@ -96,73 +107,43 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 			_ = json.NewDecoder(r.Body).Decode(&book)
 			book.ID = params["id"]
 			books = append(books, book)
-			json.NewEncoder(w).Encode(book)
 
+			// Write the updated book back to the client and return
+			json.NewEncoder(w).Encode(book)
 			return
 		}
 	}
+
+	// Return the current slice of books
 	json.NewEncoder(w).Encode(books)
 }
 
 // Delete Book
 func deleteBook(w http.ResponseWriter, r *http.Request) {
+	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params
 
 	// Look through the books and find the id
 	for index, item := range books {
 		if item.ID == params["id"] {
+			// Strip out the matching record from the the slice and return
 			books = append(books[:index], books[index+1:]...)
 			break
 		}
 	}
+
+	// Return the current slice of books
 	json.NewEncoder(w).Encode(books)
 }
 
+// initMockData creates some sample data and fills the books slice
 func initMockData() {
 
 	// Mock Data
-	book1 := models.Book{
-		ID:    "1",
-		Isbn:  "12345",
-		Title: "Book One",
-	}
-	author1 := models.Author{
-		Firstname: "John",
-		Lastname:  "Doe",
-	}
-	address1 := models.Address{
-		AddressLine1: "123 Main Street",
-		AddressLine2: "",
-		City:         "San Diego",
-		State:        "CA",
-		Zip:          92127,
-	}
-
-	author1.Address = &address1
-	book1.Author = &author1
-	books = append(books, book1)
-
-	book2 := models.Book{
-		ID:    "2",
-		Isbn:  "78910",
-		Title: "Book Two",
-	}
-	author2 := models.Author{
-		Firstname: "Sam",
-		Lastname:  "Smith",
-	}
-	address2 := models.Address{
-		AddressLine1: "456 Front Street",
-		AddressLine2: "",
-		City:         "San Diego",
-		State:        "CA",
-		Zip:          92127,
-	}
-
-	author2.Address = &address2
-	book2.Author = &author2
-	books = append(books, book2)
+	books = append(books, models.GenerateSampleBookRecord())
+	books = append(books, models.GenerateSampleBookRecord())
+	books = append(books, models.GenerateSampleBookRecord())
 }
 
 // Execute runs the initial entrypoint to the tre cli

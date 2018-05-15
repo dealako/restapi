@@ -12,7 +12,6 @@ COMMIT := $(shell sh -c 'git rev-parse --short HEAD')
 
 LDFLAGS=-ldflags "-s -X main.name=$(APP_NAME) -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.branch=$(BRANCH) -X main.buildDate=$(BUILD_TIME)"
 
-GLIDE := $(shell command -v glide 2> /dev/null)
 GO_META_LINTER=../../../../bin/gometalinter
 
 .DEFAULT_GOAL: $(BINARY)
@@ -29,14 +28,8 @@ clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
 .PHONY: install-deps
-install-deps: $(GO_META_LINTER) install-glide
-
-install-glide:
-ifndef GLIDE
-	$(error "glide is not available - please install glide")
-endif
-	glide install --force
-	glide up
+install-deps: $(GO_META_LINTER)
+	dep ensure
 
 $(GO_META_LINTER):
 	@echo "Downloading gometalinter..."
