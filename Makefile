@@ -36,6 +36,10 @@ $(GO_META_LINTER):
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
+.PHONY: test
+test:
+	go test -v ./...
+
 .PHONY: analyze
 analyze: install-deps
 	@echo "Analyzing code..."

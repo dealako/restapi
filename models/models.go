@@ -50,7 +50,7 @@ func GenerateSampleBookRecord() Book {
 	}
 
 	address := Address{
-		AddressLine1: fmt.Sprintf("%d Main Street", rand.Intn(1000)),
+		AddressLine1: fmt.Sprintf("%d %s", rand.Intn(1000), getRandomStreetName()),
 		AddressLine2: "",
 		City:         "San Diego",
 		State:        "CA",
@@ -61,4 +61,21 @@ func GenerateSampleBookRecord() Book {
 	book.Author = &author
 
 	return book
+}
+
+// Mock data for street names
+var streets = [...]string{
+	"Main Street",
+	"Deer Ridge Road",
+	"El Caminio Real",
+	"Mira Mesa Blvd",
+	"Spring Garden Road",
+	"Lonely Lane",
+	"Deserted Delta Way",
+	"Del Sur Blvd",
+}
+
+// getRandomStreetName returns a random street name from our static collection of street names
+func getRandomStreetName() string {
+	return streets[rand.Intn(len(streets))]
 }

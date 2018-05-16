@@ -27,6 +27,7 @@ jobs:
       - run: make clean
       - run: make install-deps
       - run: make
+      - run: make test
       - run: make analyze
       #- run: go get -v -t -d ./...
       #- run: go test -v ./...
