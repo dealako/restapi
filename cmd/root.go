@@ -167,13 +167,14 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 // initMockData creates some sample data and fills the books slice
 func initMockData() {
 
-	// Mock Data
+	// Generate Mock Data
+	books = append(books, models.GenerateSampleBookRecord())
 	books = append(books, models.GenerateSampleBookRecord())
 	books = append(books, models.GenerateSampleBookRecord())
 	books = append(books, models.GenerateSampleBookRecord())
 }
 
-// Execute runs the initial entrypoint to the tre cli
+// Execute runs the initial entrypoint to the command line application
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		log.Fatalf("Error running tre: %v", err)
