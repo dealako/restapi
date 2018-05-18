@@ -39,7 +39,7 @@ clean-all: clean
 
 .PHONY: install-deps
 install-deps: $(GO_META_LINTER)
-	dep ensure -update
+	dep ensure -vendor-only
 
 $(GO_META_LINTER):
 	@echo "Downloading gometalinter..."
