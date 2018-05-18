@@ -1,9 +1,12 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Book Struct (Model)
@@ -49,8 +52,14 @@ func GenerateSampleBookRecord() Book {
 		Lastname:  "Doe",
 	}
 
+	// Generate a random street name
+	randomStreetName, err := getRandomStreetName()
+	if err != nil {
+		log.Warn(err)
+	}
+
 	address := Address{
-		AddressLine1: fmt.Sprintf("%d %s", rand.Intn(1000), getRandomStreetName()),
+		AddressLine1: fmt.Sprintf("%d %s", rand.Intn(1000), randomStreetName),
 		AddressLine2: "",
 		City:         "San Diego",
 		State:        "CA",
@@ -76,6 +85,11 @@ var streets = [...]string{
 }
 
 // getRandomStreetName returns a random street name from our static collection of street names
-func getRandomStreetName() string {
-	return streets[rand.Intn(len(streets))]
+func getRandomStreetName() (string, error) {
+	numStreets := len(streets)
+	if numStreets == 0 {
+		return "", errors.New("Empty list of street names - expecting at least one")
+	}
+
+	return streets[rand.Intn(numStreets)], nil
 }

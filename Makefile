@@ -19,17 +19,27 @@ GO_META_LINTER=../../../../bin/gometalinter
 $(BINARY): $(SOURCES)
 	go build ${LDFLAGS} -o ${BINARY} main.go
 
+$(SOURCES): install-deps
+
 .PHONY: install
 install:
 	go install ${LDFLAGS} ./...
+
+.PHONY: docker
+docker:
+	docker build .
 
 .PHONY: clean
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
+.PHONY: clean-all
+clean-all: clean
+	rm -Rf vendor/
+
 .PHONY: install-deps
 install-deps: $(GO_META_LINTER)
-	dep ensure
+	dep ensure -vendor-only
 
 $(GO_META_LINTER):
 	@echo "Downloading gometalinter..."
