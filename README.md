@@ -41,13 +41,65 @@ This will generate a binary for the current computer architecture.
 
 ## Running
 
-To run the application, run the following command:
+To run the application, run the following command. The default port is `8000`:
 
 ```bash
 ./restapi
+```
+
+or specify a different HTTP port:
+
+```bash
+./restapi -p 8080
 ```
 
 Once the application is running, connect on port 8000 with a web browser,
 your favorite REST client such as [Postman](https://www.getpostman.com/), or
 other HTTP clients such as [cURL](https://curl.haxx.se/) or even
 [resty](https://github.com/micha/resty).
+
+## Docker
+
+### Docker Build
+
+The `Makefile` has a target to build a docker image.
+
+```bash
+make docker
+```
+
+### Docker Run
+
+To run the docker image, simply run:
+
+```bash
+docker run -it -p 8000:8000 dealako/restapi:<git hash>
+```
+
+for example:
+
+```bash
+docker run -it -p 8000:8000 dealako/restapi:38d8dff
+```
+
+### Docker Publish
+
+To publish the docker image to hub.docker.com under the dealako project, run:
+
+```bash
+make docker-push
+```
+
+You will need permissions to push the docker image unless you change the image tag/path.
+
+## API
+
+The API has a few REST endpoints:
+
+| Method | REST Endpoint   | Description                              |
+|:-------|:----------------|:-----------------------------------------|
+| GET    | /api/books      | Retrives all the books                   |
+| GET    | /api/books/{id} | Retrievs a specific book by ID           |
+| POST   | /api/books      | Adds a book                              |
+| PUT    | /api/books/{id} | Updates a book based on the book ID      |
+| DELETE | /api/books/{id} | Deletes a specific book based on the ID  |

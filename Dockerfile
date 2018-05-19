@@ -15,8 +15,8 @@ RUN dep ensure -vendor-only
 # Copy all project and build it
 # This layer is rebuilt when ever a file has changed in the project directory
 COPY . /go/src/github.com/dealako/restapi/
-RUN make
-COPY restapi /bin/restapi
+RUN make all
+COPY restapi-linux-amd64 /bin/restapi
 
 # This results in a single layer image
 FROM scratch

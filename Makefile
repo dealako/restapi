@@ -21,13 +21,22 @@ $(BINARY): $(SOURCES)
 
 $(SOURCES): install-deps
 
+.PHONY: all
+all: $(BINARY)
+	env GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY)-linux-amd64 main.go
+	env GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY)-darwin-amd64 main.go
+
 .PHONY: install
 install:
 	go install ${LDFLAGS} ./...
 
 .PHONY: docker
 docker:
-	docker build .
+	docker build -t dealako/restapi:$(COMMIT) .
+
+.PHONY: docker-push
+docker-push: docker
+	docker push dealako/restapi:$(COMMIT)
 
 .PHONY: clean
 clean:
