@@ -26,7 +26,7 @@ var RootCmd = &cobra.Command{
 var httpPort int64 = 8000
 var statsHost = "localhost"
 var statsPort int64 = 8125
-var stats statsd.Client
+var stat statsd.Client
 
 func init() {
 	RootCmd.Run = create
@@ -54,14 +54,14 @@ func create(cmd *cobra.Command, args []string) {
 	log.Infof("Statsd host           : %s", statsHost)
 	log.Infof("Statsd port           : %d", statsPort)
 
-	stats, err := statsd.New(statsd.Address(fmt.Sprintf("%s:%d", statsHost, statsPort))) // Connect to the UDP host:port
+	stat, err := statsd.New(statsd.Address(fmt.Sprintf("%s:%d", statsHost, statsPort))) // Connect to the UDP host:port
 	if err != nil {
 		// If nothing is listening on the target port, an error is returned and
 		// the returned client does nothing but is still usable. So we can
 		// just log the error and go on.
 		log.Print(err)
 	}
-	defer stats.Close()
+	defer stat.Close()
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", httpPort), r))
 
@@ -73,7 +73,7 @@ var books []models.Book
 // Get All Books
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	// Increment our stats
-	stats.Increment("restapi.book.get.counter")
+	stat.Increment("restapi.book.get.counter")
 
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
@@ -86,7 +86,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 // Get Single Book
 func getBook(w http.ResponseWriter, r *http.Request) {
 	// Increment our stats
-	stats.Increment("restapi.book.getId.counter")
+	stat.Increment("restapi.book.getId.counter")
 
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
@@ -114,7 +114,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 // Create Books
 func createBook(w http.ResponseWriter, r *http.Request) {
 	// Increment our stats
-	stats.Increment("restapi.book.create.counter")
+	stat.Increment("restapi.book.create.counter")
 
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
@@ -137,7 +137,7 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 // Update Book
 func updateBook(w http.ResponseWriter, r *http.Request) {
 	// Increment our stats
-	stats.Increment("restapi.book.update.counter")
+	stat.Increment("restapi.book.update.counter")
 
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
@@ -175,7 +175,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 // Delete Book
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	// Increment our stats
-	stats.Increment("restapi.book.delete.counter")
+	stat.Increment("restapi.book.delete.counter")
 
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
