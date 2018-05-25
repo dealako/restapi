@@ -13,6 +13,7 @@ import (
 	"github.com/dealako/restapi/utils"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+	statsd "gopkg.in/alexcesaro/statsd.v2"
 )
 
 // RootCmd to kick things off
@@ -23,11 +24,16 @@ var RootCmd = &cobra.Command{
 }
 
 var httpPort int64 = 8000
+var statsHost = "localhost"
+var statsPort int64 = 8125
+var stats statsd.Client
 
 func init() {
 	RootCmd.Run = create
 
-	RootCmd.Flags().Int64VarP(&httpPort, "port", "p", 8000, "The HTTP port")
+	RootCmd.Flags().Int64VarP(&httpPort, "http-port", "p", 8000, "The HTTP port")
+	RootCmd.Flags().StringVarP(&statsHost, "stats-host", "", "localhost", "The stats host to connect to")
+	RootCmd.Flags().Int64VarP(&statsPort, "stats-port", "", 8125, "The stats port to connect to")
 }
 
 func create(cmd *cobra.Command, args []string) {
@@ -45,6 +51,18 @@ func create(cmd *cobra.Command, args []string) {
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
 	log.Infof("HTTP server port      : %d", httpPort)
+	log.Infof("Statsd host           : %s", statsHost)
+	log.Infof("Statsd port           : %d", statsPort)
+
+	stats, err := statsd.New(statsd.Address(fmt.Sprintf("%s:%d", statsHost, statsPort))) // Connect to the UDP host:port
+	if err != nil {
+		// If nothing is listening on the target port, an error is returned and
+		// the returned client does nothing but is still usable. So we can
+		// just log the error and go on.
+		log.Print(err)
+	}
+	defer stats.Close()
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", httpPort), r))
 
 }
@@ -54,6 +72,9 @@ var books []models.Book
 
 // Get All Books
 func getBooks(w http.ResponseWriter, r *http.Request) {
+	// Increment our stats
+	stats.Increment("restapi.book.get.counter")
+
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(books)
@@ -64,6 +85,9 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 
 // Get Single Book
 func getBook(w http.ResponseWriter, r *http.Request) {
+	// Increment our stats
+	stats.Increment("restapi.book.getId.counter")
+
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params
@@ -89,6 +113,9 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 
 // Create Books
 func createBook(w http.ResponseWriter, r *http.Request) {
+	// Increment our stats
+	stats.Increment("restapi.book.create.counter")
+
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 
@@ -109,6 +136,9 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 
 // Update Book
 func updateBook(w http.ResponseWriter, r *http.Request) {
+	// Increment our stats
+	stats.Increment("restapi.book.update.counter")
+
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params
@@ -144,6 +174,9 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 
 // Delete Book
 func deleteBook(w http.ResponseWriter, r *http.Request) {
+	// Increment our stats
+	stats.Increment("restapi.book.delete.counter")
+
 	// Set the response type
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get params

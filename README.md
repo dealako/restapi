@@ -1,8 +1,19 @@
+---
+theme : "white"
+transition: "zoom"
+highlightTheme: "darkula"
+---
 # REST API in Go
 
-This is a sample Go project that illustrates a REST service.  The code example is a walkthru from [a Traversy Media video on YouTube](https://www.youtube.com/watch?v=SonwZ6MF5BE). The application includes a simple REST application with the usual crate, read, update, and delete (CRUD) functions.
+This is a sample Go project that illustrates a REST service. The code example
+is a walkthru from [a Traversy Media video on
+YouTube](https://www.youtube.com/watch?v=SonwZ6MF5BE). The application
+includes a simple REST application with the usual crate, read, update, and
+delete (CRUD) functions.
 
-The models for the sample REST application are in the `models` folder which consist of a Book, Author and Address objects.
+<span class="fragment"><small>Created by [David Deal](http://github.com/dealako) / [@dealako](http://twitter.com/dealako)</small></fragment>
+
+---
 
 ## Dependencies
 
@@ -18,10 +29,25 @@ make install-deps
 Otherwise, you can install them manually:
 
 ```bash
-# Install mux router
+# Manually install dependencies
 go get -u github.com/gorilla/mux
 go get -u github.com/sirupsen/logrus
+go get -u github.com/spf13/cobra
+go get -u gopkg.in/alexcesaro/statsd.v2
 ```
+
+---
+
+## Code Organization
+
+The models for the sample REST application are in the `models` folder which
+consist of a Book, Author and Address objects.
+
+<span class="fragment">The `utils` folder contains the command line ascii artwork.</span>
+
+<span class="fragment">The main business logic is in the `cmd` folder.</span>
+
+---
 
 ## Build
 
@@ -30,6 +56,10 @@ To build the application, run one of the following commands:
 ```bash
 # Using make - will include additional metadata in the binary such as BUILD_TIME, VERSION, git commit/branch, and app name
 make
+
+or
+
+make restapi
 ```
 
 ```bash
@@ -38,6 +68,8 @@ go build
 ```
 
 This will generate a binary for the current computer architecture.
+
+---
 
 ## Running
 
@@ -58,6 +90,8 @@ your favorite REST client such as [Postman](https://www.getpostman.com/), or
 other HTTP clients such as [cURL](https://curl.haxx.se/) or even
 [resty](https://github.com/micha/resty).
 
+---
+
 ## Docker
 
 ### Docker Build
@@ -67,6 +101,8 @@ The `Makefile` has a target to build a docker image.
 ```bash
 make docker
 ```
+
+---
 
 ### Docker Run
 
@@ -82,6 +118,8 @@ for example:
 docker run -it -p 8000:8000 dealako/restapi:38d8dff
 ```
 
+---
+
 ### Docker Publish
 
 To publish the docker image to hub.docker.com under the dealako project, run:
@@ -92,9 +130,9 @@ make docker-push
 
 You will need permissions to push the docker image unless you change the image tag/path.
 
-## API
+---
 
-The API has a few REST endpoints:
+## API - REST Endpoints
 
 | Method | REST Endpoint   | Description                              |
 |:-------|:----------------|:-----------------------------------------|
@@ -103,3 +141,5 @@ The API has a few REST endpoints:
 | POST   | /api/books      | Adds a book                              |
 | PUT    | /api/books/{id} | Updates a book based on the book ID      |
 | DELETE | /api/books/{id} | Deletes a specific book based on the ID  |
+
+---

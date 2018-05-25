@@ -40,7 +40,7 @@ docker-push: docker
 
 .PHONY: clean
 clean:
-	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+	rm -f ${BINARY}*
 
 .PHONY: clean-all
 clean-all: clean
