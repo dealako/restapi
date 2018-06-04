@@ -71,6 +71,16 @@ This will generate a binary for the current computer architecture.
 
 ---
 
+## Testing
+
+To execute the unit tests, run:
+
+```bash
+make test
+```
+
+---
+
 ## Running
 
 To run the application, run the following command. The default port is `8000`:

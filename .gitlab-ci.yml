@@ -1,0 +1,111 @@
+image: golang:1.10-alpine3.7
+
+stages:
+  - pre-flight
+  - resolve-dependencies
+  - compile
+  - unit-test
+  - package
+  - deployment-test
+  - functional-test
+  - security-test
+  - publish
+  - deploy
+
+variables:
+  REPOSITORY_NAME: hub.docker.com
+  GROUP_NAME: dealako
+  IMAGE_NAME: restapi
+  APP_PATH: /go/src/github.com/dealako/restapi
+
+before_script:
+  - mkdir -p ${APP_PATH}
+  - ln -s $PWD ${APP_PATH}
+  - mkdir -p ${APP_PATH}/vendor
+  - cd ${APP_PATH}
+  - apk add --no-cache --update git make
+  - go get github.com/golang/dep/cmd/dep
+
+.dockerScripts: &docker_scripts
+  before_script:
+    - if [ "${CI_JOB_STAGE}" == "publish" ]; then docker pull ${GROUP_NAME}/${IMAGE_NAME}:${CI_COMMIT_SHA}; fi
+  after_script:
+    - docker images -aq ${GROUP_NAME}/${IMAGE_NAME} | xargs docker rmi --force
+
+cache:
+  key: "$CI_COMMIT_SHA"
+  untracked: true
+  paths:
+    - vendor/
+
+installDependencies:
+  stage: resolve-dependencies
+  script:
+    - cd ${APP_PATH}
+    - make install-deps
+
+compile:
+  stage: compile
+  script:
+    - cd ${APP_PATH}
+    - make
+  artifacts:
+    expire_in: 1 hr
+    paths:
+      - .bin
+
+test:
+  stage: unit-test
+  script:
+    - cd ${APP_PATH}
+    - make test
+  artifacts:
+    expire_in: 1 hr
+
+buildImage:
+  <<: *docker_scripts
+  stage: package
+  dependencies:
+    - compile
+  script:
+    - make docker
+    - docker build -t ${GROUP_NAME}/${IMAGE_NAME}:${CI_COMMIT_SHA} .
+
+publishTest:
+  <<: *docker_scripts
+  stage: publish
+  script:
+    - docker tag $GROUP_NAME/${IMAGE_NAME}:$CI_COMMIT_SHA $GROUP_NAME/${IMAGE_NAME}:test
+    - docker push $GROUP_NAME/${IMAGE_NAME}:test
+  except:
+    - tags
+
+publishLatest:
+  <<: *docker_scripts
+  stage: publish
+  script:
+    - docker tag $GROUP_NAME/${IMAGE_NAME}:$CI_COMMIT_SHA $GROUP_NAME/${IMAGE_NAME}:latest
+    - docker push $GROUP_NAME/${IMAGE_NAME}:latest
+  only:
+    - master@lme/elasticsearch-api
+
+publishTagVersion:
+  <<: *docker_scripts
+  stage: publish
+  script:
+    - docker tag ${GROUP_NAME}/${IMAGE_NAME}:${CI_COMMIT_SHA} $GROUP_NAME/${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - docker push ${GROUP_NAME}/${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+  only:
+    - tags@dealako/restapi
+
+publishStableTag:
+  <<: *docker_scripts
+  stage: publish
+  when: manual
+  variables:
+    STABLE_TAG_NAME: stable
+  script:
+    - docker tag ${GROUP_NAME}/${IMAGE_NAME}:${CI_COMMIT_SHA} ${GROUP_NAME}/${IMAGE_NAME}:${STABLE_TAG_NAME}
+    - docker push ${GROUP_NAME}/${IMAGE_NAME}:${STABLE_TAG_NAME}
+  only:
+    - tags@dealako/restapi
